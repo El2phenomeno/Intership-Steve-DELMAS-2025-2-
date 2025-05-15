@@ -51,10 +51,11 @@ class SimpleModel(nn.Module):
         x = self.out(x)
         return x
 
+print("Début entraînement local")
 
 def train_model(model, train_set):
     batch_size = 64
-    num_epochs = 10
+    num_epochs = 1
 
     train_loader = DataLoader(train_set, batch_size=batch_size, shuffle=True)
 
@@ -64,13 +65,16 @@ def train_model(model, train_set):
     model.train()
     for epoch in range(num_epochs):
         running_loss = 0.0
-        for inputs, labels in train_loader:
+        for i, (inputs, labels) in train_loader:
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
+
+            if i % 10 == 0:
+                print(f"[Epoch {epoch+1}, Batch {i}] Loss: {loss.item():.4f}")
 
 
 def evaluate_model(model, test_set):
